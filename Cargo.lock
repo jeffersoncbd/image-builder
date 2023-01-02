@@ -272,7 +272,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "image_builder"
+name = "image-builder"
 version = "0.1.0"
 dependencies = [
  "image",

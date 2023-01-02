@@ -1,5 +1,5 @@
-use image::{self, Rgba, DynamicImage, imageops};
-use imageproc::drawing::draw_text_mut;
+use image::{self, DynamicImage, ImageBuffer, Rgba};
+use imageproc::{drawing::{draw_text_mut, draw_filled_rect}, rect::Rect};
 use rusttype::{Font, Scale};
 
 pub struct Position {
@@ -18,14 +18,17 @@ impl<'a> Text<'a> {
 }
 
 pub struct Image<'a> {
-  image: DynamicImage,
+  image: ImageBuffer<Rgba<u8>, Vec<u8>>,
   font: Font<'a>,
 }
 impl<'a> Image<'a> {
   pub fn new(width: u32, height: u32) -> Image<'a> {
-    let image = image::open("src/background.png")
-      .expect("open background failed");
-    let image = image.resize_exact(width, height, imageops::FilterType::CatmullRom);
+    let image = DynamicImage::new_rgb16(width, height);
+    let image = draw_filled_rect(
+      &image,
+      Rect::at(0, 0).of_size(width, height),
+      image::Rgba([255u8, 255u8, 255u8, 255u8])
+    );
     let font = Vec::from(include_bytes!("Roboto-Regular.ttf") as &[u8]);
     let font = Font::try_from_vec(font).unwrap();
 
@@ -36,7 +39,7 @@ impl<'a> Image<'a> {
     let scale = Scale { x: text.size as f32, y: text.size as f32 };
     draw_text_mut(
       &mut self.image,
-      Rgba([0u8, 0u8, 0u8, 0u8]),
+      image::Rgba([0u8, 0u8, 0u8, 0u8]),
       text.position.x, text.position.y, scale, &self.font,
       text.content
     );

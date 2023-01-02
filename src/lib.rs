@@ -23,7 +23,7 @@ pub struct Image<'a> {
 }
 impl<'a> Image<'a> {
   pub fn new(width: u32, height: u32) -> Image<'a> {
-    let image = image::open("background.png")
+    let image = image::open("src/background.png")
       .expect("open background failed");
     let image = image.resize_exact(width, height, imageops::FilterType::CatmullRom);
     let font = Vec::from(include_bytes!("Roboto-Regular.ttf") as &[u8]);

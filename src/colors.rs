@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 const YELLOW: [u8; 4] = [255, 255, 0, 255];
 const GREEN: [u8; 4] = [0, 176, 80, 255];
+const GRAY: [u8; 4] = [191, 191, 191, 255];
 
 pub struct Colors<'a, 'b> {
   colors: HashMap<&'b str, &'a[u8; 4]>
@@ -12,6 +13,7 @@ impl<'a, 'b> Colors<'a, 'b> {
       colors: HashMap::from([
         ("yellow", &YELLOW),
         ("green", &GREEN),
+        ("gray", &GRAY),
       ])
     }
   }

@@ -66,7 +66,7 @@ impl<'a> Image<'a> {
     };
     draw_text_mut(
       &mut self.image,
-      image::Rgba([0u8, 0u8, 0u8, 0u8]),
+      image::Rgba([0u8, 0u8, 0u8, 255u8]),
       text.position.x, text.position.y, scale, font,
       text.content
     );

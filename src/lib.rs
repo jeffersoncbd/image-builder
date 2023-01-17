@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs};
+use std::{collections::HashMap};
 
 use image::{self, DynamicImage, ImageBuffer, Rgba};
 use imageproc::{drawing::{draw_text_mut, draw_filled_rect, draw_filled_rect_mut}, rect::Rect};
@@ -49,10 +49,8 @@ impl<'a> Image<'a> {
     Image { image, fonts, default_font, colors }
   }
 
-  pub fn add_custom_font(&mut self, name: &'a str, path: &'a str) {
-    let custom_font: Vec<u8> = fs::read(path)
-      .expect(&format!("It was not possible to meet the file in the path \"{}\"", path));
-    self.fonts.insert(name, Font::try_from_vec(custom_font).unwrap());
+  pub fn add_custom_font(&mut self, name: &'a str, bytes_vector: Vec<u8>) {
+    self.fonts.insert(name, Font::try_from_vec(bytes_vector).unwrap());
   }
 
   pub fn print_text(&mut self, text: Text<'a>) {

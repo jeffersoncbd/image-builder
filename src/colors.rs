@@ -6,7 +6,9 @@ const GRAY: [u8; 4] = [191, 191, 191, 255];
 const RED: [u8; 4] = [255, 0, 0, 255];
 const BLUE: [u8; 4] = [0, 112, 192, 255];
 const ORANGE: [u8; 4] = [255, 153, 0, 255];
-const VIOLET: [u8; 4] = [112, 48, 160, 255];
+const PURPLE: [u8; 4] = [112, 48, 160, 255];
+const WHITE: [u8; 4] = [255, 255, 255, 255];
+const BLACK: [u8; 4] = [0, 0, 0, 255];
 
 pub struct Colors<'a, 'b> {
     colors: HashMap<&'b str, &'a [u8; 4]>,
@@ -21,7 +23,9 @@ impl<'a, 'b> Colors<'a, 'b> {
                 ("red", &RED),
                 ("blue", &BLUE),
                 ("orange", &ORANGE),
-                ("violet", &VIOLET),
+                ("purple", &PURPLE),
+                ("white", &WHITE),
+                ("black", &BLACK),
             ]),
         }
     }

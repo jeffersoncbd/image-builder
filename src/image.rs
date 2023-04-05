@@ -1,6 +1,12 @@
 use std::{collections::HashMap, fs::File};
 
-use image::{codecs::png::PngEncoder, ImageBuffer, ImageEncoder, Rgba};
+pub use image::imageops::FilterType;
+
+use image::{
+    codecs::png::PngEncoder,
+    imageops::{crop, overlay, resize},
+    open, ImageBuffer, ImageEncoder, Rgba,
+};
 use imageproc::{
     drawing::{draw_filled_rect_mut, draw_text_mut},
     rect as procRect,
@@ -8,6 +14,7 @@ use imageproc::{
 use rusttype::Font;
 
 use crate::{
+    picture::{self, Picture},
     rect::{self, Rect},
     text::{self, Text},
 };
@@ -15,6 +22,7 @@ use crate::{
 pub enum Element {
     Text(Text),
     Rect(Rect),
+    Picture(Picture),
 }
 
 pub struct Image<'a> {
@@ -42,6 +50,10 @@ impl<'a> Image<'a> {
         self.fonts.insert(name, font);
     }
 
+    pub fn add_picture(&mut self, picture: Picture) {
+        self.elements.push(Element::Picture(picture));
+    }
+
     pub fn add_text(&mut self, text: Text) {
         self.elements.push(Element::Text(text));
     }
@@ -52,6 +64,22 @@ impl<'a> Image<'a> {
     pub fn save(&mut self, file_name: &str) {
         for element in self.elements.iter() {
             match element {
+                Element::Picture(element) => {
+                    let p = picture::extract(element);
+                    let mut pic = open(p.path)
+                        .expect(&format!("Unable to load the picture \"{}\"", p.path))
+                        .to_rgba8();
+
+                    if let Some(values) = p.crop {
+                        pic = crop(&mut pic, values.x, values.y, values.width, values.height)
+                            .to_image();
+                    }
+                    if let Some(values) = p.resize {
+                        pic = resize(&mut pic, values.nwidth, values.nheight, values.filter)
+                    }
+
+                    overlay(&mut self.image, &pic, p.x, p.y);
+                }
                 Element::Text(element) => {
                     let t = text::extract(&element);
                     let font = self.fonts.get(t.font_name).expect(&format!("Unable to load the \"{}\" font, please verify that the name is correct or that it was loaded using the \"add_custom_font\" method.", t.font_name));

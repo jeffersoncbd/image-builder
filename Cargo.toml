@@ -1,12 +1,9 @@
 [package]
 name = "image-builder"
-version = "0.3.4"
-author = "Jefferson Carlos"
+version = "0.4.0"
 edition = "2021"
 description = "A tool for mount images with texts"
 license = "MIT"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 image = "0.24.5"

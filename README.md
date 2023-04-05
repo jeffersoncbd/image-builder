@@ -3,3 +3,5 @@
 </p>
 
 Image Builder is a high-level library that uses the [image](https://crates.io/crates/image) crate as the engine to generate simple PNG images, but with convenience and simplicity.
+
+## [Documentation](https://docs.rs/image-builder)

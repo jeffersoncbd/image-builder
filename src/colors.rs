@@ -1,3 +1,5 @@
+/// The library provides a variety of basic colors for quick use but imposes no limits on the
+/// choice of colors used. Any RGBA color can be used as long as it follows this structure.
 pub type Color = [u8; 4];
 
 pub const YELLOW: Color = [255, 255, 0, 255];

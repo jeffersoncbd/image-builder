@@ -87,16 +87,23 @@ impl<'a> Image<'a> {
                 Element::Text(element) => {
                     let t = text::extract(&element);
                     let font = self.fonts.get(t.font_name).expect(&format!("Unable to load the \"{}\" font, please verify that the name is correct or that it was loaded using the \"add_custom_font\" method.", t.font_name));
-                    draw_text_mut(&mut image, t.color, t.x, t.y, t.scale, font, t.content);
+                    let mut text_image =
+                        ImageBuffer::from_pixel(self.size.0, self.size.1, Rgba([0, 0, 0, 0]));
+                    draw_text_mut(&mut text_image, t.color, 0, 0, t.scale, font, t.content);
+                    overlay(&mut image, &text_image, t.x as i64, t.y as i64);
                 }
                 Element::Rect(element) => {
                     let r = rect::extract(element);
+                    let mut rect_image =
+                        ImageBuffer::from_pixel(r.width, r.height, Rgba([0, 0, 0, 0]));
 
                     draw_filled_rect_mut(
-                        &mut image,
-                        procRect::Rect::at(r.x, r.y).of_size(r.width, r.height),
+                        &mut rect_image,
+                        procRect::Rect::at(0, 0).of_size(r.width, r.height),
                         r.color,
-                    )
+                    );
+
+                    overlay(&mut image, &rect_image, r.x as i64, r.y as i64);
                 }
             }
         }

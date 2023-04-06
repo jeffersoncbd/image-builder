@@ -36,6 +36,14 @@ fn main() {
         Text::new("Image Builder")
             .size(90)
             .font("Roboto bold")
+            .position(60, 125)
+            .color([0, 0, 0, 100]),
+    );
+
+    image.add_text(
+        Text::new("Image Builder")
+            .size(90)
+            .font("Roboto bold")
             .position(55, 120)
             .color(colors::PURPLE),
     );

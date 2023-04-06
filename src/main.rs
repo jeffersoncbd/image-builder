@@ -5,7 +5,7 @@ use image_builder::{colors, FilterType, Image, Picture, Rect, Text};
 fn main() {
     let width = 600;
     let height = 280;
-    let mut image = Image::new(width, height);
+    let mut image = Image::new(width, height, colors::GRAY);
 
     let roboto_bold = fs::read("fonts/Roboto/Roboto-Bold.ttf").unwrap();
 
@@ -22,7 +22,7 @@ fn main() {
         Rect::new()
             .size(width - 30, height - 30)
             .position(15, 15)
-            .color(colors::WHITE),
+            .color(colors::GRAY),
     );
 
     image.add_picture(

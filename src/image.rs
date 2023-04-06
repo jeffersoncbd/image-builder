@@ -14,6 +14,7 @@ use imageproc::{
 use rusttype::Font;
 
 use crate::{
+    colors::Color,
     picture::{self, Picture},
     rect::{self, Rect},
     text::{self, Text},
@@ -26,20 +27,21 @@ pub enum Element {
 }
 
 pub struct Image<'a> {
-    image: ImageBuffer<Rgba<u8>, Vec<u8>>,
+    background: Color,
+    size: (u32, u32),
     fonts: HashMap<&'a str, Font<'a>>,
     elements: Vec<Element>,
 }
 
 impl<'a> Image<'a> {
-    pub fn new(width: u32, height: u32) -> Image<'a> {
-        let image = ImageBuffer::from_pixel(width, height, Rgba([255, 255, 255, 255]));
+    pub fn new(width: u32, height: u32, background: Color) -> Image<'a> {
         let default_font = Vec::from(include_bytes!("Roboto-Regular.ttf") as &[u8]);
         let default_font = Font::try_from_vec(default_font)
             .expect("Fail to load the default font \"Roboto-Regular.ttf\"");
 
         Image {
-            image,
+            background,
+            size: (width, height),
             fonts: HashMap::from([("default", default_font)]),
             elements: Vec::new(),
         }
@@ -62,6 +64,8 @@ impl<'a> Image<'a> {
     }
 
     pub fn save(&mut self, file_name: &str) {
+        let mut image = ImageBuffer::from_pixel(self.size.0, self.size.1, Rgba(self.background));
+
         for element in self.elements.iter() {
             match element {
                 Element::Picture(element) => {
@@ -78,18 +82,18 @@ impl<'a> Image<'a> {
                         pic = resize(&mut pic, values.nwidth, values.nheight, values.filter)
                     }
 
-                    overlay(&mut self.image, &pic, p.x, p.y);
+                    overlay(&mut image, &pic, p.x, p.y);
                 }
                 Element::Text(element) => {
                     let t = text::extract(&element);
                     let font = self.fonts.get(t.font_name).expect(&format!("Unable to load the \"{}\" font, please verify that the name is correct or that it was loaded using the \"add_custom_font\" method.", t.font_name));
-                    draw_text_mut(&mut self.image, t.color, t.x, t.y, t.scale, font, t.content);
+                    draw_text_mut(&mut image, t.color, t.x, t.y, t.scale, font, t.content);
                 }
                 Element::Rect(element) => {
                     let r = rect::extract(element);
 
                     draw_filled_rect_mut(
-                        &mut self.image,
+                        &mut image,
                         procRect::Rect::at(r.x, r.y).of_size(r.width, r.height),
                         r.color,
                     )
@@ -104,9 +108,9 @@ impl<'a> Image<'a> {
         let encoder = PngEncoder::new(file);
         encoder
             .write_image(
-                &self.image,
-                self.image.width(),
-                self.image.height(),
+                &image,
+                image.width(),
+                image.height(),
                 image::ColorType::Rgba8,
             )
             .unwrap();

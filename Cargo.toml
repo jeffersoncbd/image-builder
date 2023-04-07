@@ -1,6 +1,6 @@
 [package]
 name = "image-builder"
-version = "0.5.2"
+version = "1.0.0"
 edition = "2021"
 description = "Image Builder is a high-level library that uses the image crate as the engine to generate PNG images, but with convenience and simplicity."
 license = "MIT"

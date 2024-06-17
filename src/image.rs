@@ -8,7 +8,7 @@ use image::{
     open, ImageBuffer, ImageEncoder, Rgba,
 };
 use imageproc::{
-    drawing::{draw_filled_rect_mut, draw_text_mut},
+    drawing::{draw_filled_rect_mut, draw_text_mut, text_size},
     rect as procRect,
 };
 use rusttype::Font;
@@ -115,6 +115,14 @@ impl<'a> Image<'a> {
     /// This method allows for adding formatted text to the image being built. Refer to the [`Text`] for more details.
     pub fn add_text(&mut self, text: Text) {
         self.elements.push(Element::Text(text));
+    }
+
+    /// This method can be used before `add_text` to reqeust the expected width and height of a
+    /// text element.
+    pub fn text_size(&mut self, text: &Text) -> (i32, i32) {
+        let t = text::extract(&text);
+        let font = self.fonts.get(t.font_name).expect(&format!("Unable to load the \"{}\" font, please verify that the name is correct or that it was loaded using the \"add_custom_font\" method.", t.font_name));
+        text_size(t.scale, font, &t.content)
     }
 
     /// This method allows for adding rectangular shapes to the image being built. Refer to the [`Rect`] for more details.

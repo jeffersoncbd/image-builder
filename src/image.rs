@@ -37,12 +37,21 @@ pub enum Element {
 /// is essential to keep this order in mind when creating images with multiple elements to ensure that
 /// the elements are in the desired order.
 /// ## Examples
-/// ```
+/// ```rust
+/// # use image_builder::Image;
+/// # use image_builder::Rect;
+/// # use image_builder::Text;
+/// # use image_builder::colors;
 /// let mut image = Image::new(500, 500, colors::WHITE);
 /// image.add_text(Text::new("Image Builder"));
 /// image.add_rect(Rect::new().size(200, 200)); // This rectangle covers the text.
 /// ```
-/// ```
+///
+/// ```rust
+/// # use image_builder::Image;
+/// # use image_builder::Rect;
+/// # use image_builder::Text;
+/// # use image_builder::colors;
 /// let mut image = Image::new(500, 500, colors::WHITE);
 /// image.add_rect(Rect::new().size(200, 200)); // This rectangle is in the background of the text.
 /// image.add_text(Text::new("Image Builder"));
@@ -85,8 +94,9 @@ impl<'a> Image<'a> {
     /// ```
     /// use image_builder::Image;
     /// use std::fs;
+    /// use image_builder::colors;
     ///
-    /// let mut image = //Image::new...
+    /// let mut image = Image::new(500, 500, colors::WHITE);
     /// let roboto_bold = fs::read("fonts/Roboto/Roboto-Bold.ttf").unwrap();
     /// image.add_custom_font("Roboto bold", roboto_bold);
     /// ```

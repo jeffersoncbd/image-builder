@@ -10,6 +10,7 @@ use image::imageops::FilterType;
 /// image, the library will always perform cropping first, and then resizing.** ⚠️
 /// ## Example
 /// ```
+/// # use image_builder::FilterType;
 /// use image_builder::Picture;
 ///
 /// Picture::new("/home/user/logo.png")
@@ -46,7 +47,8 @@ impl Picture {
 
     /// This method allows resizing an image by specifying the desired new height, width and [`FilterType`].
     /// ## Example
-    /// ```
+    /// ```rust
+    /// # use image_builder::FilterType;
     /// use image_builder::Picture;
     ///
     /// Picture::new("/home/user/logo.png")

@@ -144,12 +144,12 @@ impl<'a> Image<'a> {
                         .expect(&format!("Unable to load the picture \"{}\"", p.path))
                         .to_rgba8();
 
+                    if let Some(values) = p.resize {
+                        pic = resize(&mut pic, values.nwidth, values.nheight, values.filter)
+                    }
                     if let Some(values) = p.crop {
                         pic = crop(&mut pic, values.x, values.y, values.width, values.height)
                             .to_image();
-                    }
-                    if let Some(values) = p.resize {
-                        pic = resize(&mut pic, values.nwidth, values.nheight, values.filter)
                     }
 
                     overlay(&mut image, &pic, p.x, p.y);

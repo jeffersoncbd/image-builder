@@ -20,6 +20,7 @@ use crate::{
     text::{self, Text},
 };
 
+#[derive(Clone)]
 pub enum Element {
     Text(Text),
     Rect(Rect),
@@ -56,6 +57,7 @@ pub enum Element {
 /// image.add_rect(Rect::new().size(200, 200)); // This rectangle is in the background of the text.
 /// image.add_text(Text::new("Image Builder"));
 /// ```
+#[derive(Clone)]
 pub struct Image<'a> {
     background: Color,
     size: (u32, u32),

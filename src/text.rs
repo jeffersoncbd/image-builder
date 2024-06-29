@@ -94,6 +94,7 @@ impl Text {
     }
 }
 
+#[derive(Clone)]
 pub struct TextValues<'a> {
     pub color: Rgba<u8>,
     pub x: i32,

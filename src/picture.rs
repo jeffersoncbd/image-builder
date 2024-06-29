@@ -87,17 +87,22 @@ impl Picture {
     }
 }
 
+#[derive(Clone)]
 pub struct CropValues {
     pub x: u32,
     pub y: u32,
     pub width: u32,
     pub height: u32,
 }
+
+#[derive(Clone)]
 pub struct ResizeValues {
     pub nwidth: u32,
     pub nheight: u32,
     pub filter: FilterType,
 }
+
+#[derive(Clone)]
 pub struct PictureValues<'a> {
     pub path: &'a String,
     pub x: i64,

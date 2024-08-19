@@ -5,7 +5,7 @@ pub use image::imageops::FilterType;
 use image::{
     codecs::png::PngEncoder,
     imageops::{crop, overlay, resize},
-    open, ImageBuffer, ImageEncoder, Rgba,
+    ImageBuffer, ImageEncoder, Rgba,
 };
 use imageproc::{
     drawing::{draw_filled_rect_mut, draw_text_mut, text_size},
@@ -142,9 +142,7 @@ impl<'a> Image<'a> {
             match element {
                 Element::Picture(element) => {
                     let p = picture::extract(element);
-                    let mut pic = open(p.path)
-                        .expect(&format!("Unable to load the picture \"{}\"", p.path))
-                        .to_rgba8();
+                    let mut pic = p.img.to_rgba8();
 
                     if let Some(values) = p.resize {
                         pic = resize(&mut pic, values.nwidth, values.nheight, values.filter)

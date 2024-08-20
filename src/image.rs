@@ -5,10 +5,10 @@ pub use image::imageops::FilterType;
 use image::{
     codecs::png::PngEncoder,
     imageops::{crop, overlay, resize},
-    open, ImageBuffer, ImageEncoder, Rgba,
+    ImageBuffer, ImageEncoder, Rgba,
 };
 use imageproc::{
-    drawing::{draw_filled_rect_mut, draw_text_mut},
+    drawing::{draw_filled_rect_mut, draw_text_mut, text_size},
     rect as procRect,
 };
 use rusttype::Font;
@@ -20,6 +20,7 @@ use crate::{
     text::{self, Text},
 };
 
+#[derive(Clone)]
 pub enum Element {
     Text(Text),
     Rect(Rect),
@@ -37,16 +38,26 @@ pub enum Element {
 /// is essential to keep this order in mind when creating images with multiple elements to ensure that
 /// the elements are in the desired order.
 /// ## Examples
-/// ```
+/// ```rust
+/// # use image_builder::Image;
+/// # use image_builder::Rect;
+/// # use image_builder::Text;
+/// # use image_builder::colors;
 /// let mut image = Image::new(500, 500, colors::WHITE);
 /// image.add_text(Text::new("Image Builder"));
 /// image.add_rect(Rect::new().size(200, 200)); // This rectangle covers the text.
 /// ```
-/// ```
+///
+/// ```rust
+/// # use image_builder::Image;
+/// # use image_builder::Rect;
+/// # use image_builder::Text;
+/// # use image_builder::colors;
 /// let mut image = Image::new(500, 500, colors::WHITE);
 /// image.add_rect(Rect::new().size(200, 200)); // This rectangle is in the background of the text.
 /// image.add_text(Text::new("Image Builder"));
 /// ```
+#[derive(Clone)]
 pub struct Image<'a> {
     background: Color,
     size: (u32, u32),
@@ -85,8 +96,9 @@ impl<'a> Image<'a> {
     /// ```
     /// use image_builder::Image;
     /// use std::fs;
+    /// use image_builder::colors;
     ///
-    /// let mut image = //Image::new...
+    /// let mut image = Image::new(500, 500, colors::WHITE);
     /// let roboto_bold = fs::read("fonts/Roboto/Roboto-Bold.ttf").unwrap();
     /// image.add_custom_font("Roboto bold", roboto_bold);
     /// ```
@@ -107,6 +119,14 @@ impl<'a> Image<'a> {
         self.elements.push(Element::Text(text));
     }
 
+    /// This method can be used before `add_text` to reqeust the expected width and height of a
+    /// text element.
+    pub fn text_size(&mut self, text: &Text) -> (i32, i32) {
+        let t = text::extract(&text);
+        let font = self.fonts.get(t.font_name).expect(&format!("Unable to load the \"{}\" font, please verify that the name is correct or that it was loaded using the \"add_custom_font\" method.", t.font_name));
+        text_size(t.scale, font, &t.content)
+    }
+
     /// This method allows for adding rectangular shapes to the image being built. Refer to the [`Rect`] for more details.
     pub fn add_rect(&mut self, rect: Rect) {
         self.elements.push(Element::Rect(rect));
@@ -122,16 +142,14 @@ impl<'a> Image<'a> {
             match element {
                 Element::Picture(element) => {
                     let p = picture::extract(element);
-                    let mut pic = open(p.path)
-                        .expect(&format!("Unable to load the picture \"{}\"", p.path))
-                        .to_rgba8();
+                    let mut pic = p.img.to_rgba8();
 
+                    if let Some(values) = p.resize {
+                        pic = resize(&mut pic, values.nwidth, values.nheight, values.filter)
+                    }
                     if let Some(values) = p.crop {
                         pic = crop(&mut pic, values.x, values.y, values.width, values.height)
                             .to_image();
-                    }
-                    if let Some(values) = p.resize {
-                        pic = resize(&mut pic, values.nwidth, values.nheight, values.filter)
                     }
 
                     overlay(&mut image, &pic, p.x, p.y);

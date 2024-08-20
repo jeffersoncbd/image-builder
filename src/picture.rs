@@ -1,4 +1,5 @@
 use image::imageops::FilterType;
+use image::DynamicImage;
 
 /// External images.
 ///
@@ -10,9 +11,12 @@ use image::imageops::FilterType;
 /// image, the library will always perform cropping first, and then resizing.** ⚠️
 /// ## Example
 /// ```
+/// # use image_builder::FilterType;
+/// # let file_bytes:Vec<u8> = Vec::new();
 /// use image_builder::Picture;
+/// use image::DynamicImage;
 ///
-/// Picture::new("/home/user/logo.png")
+/// Picture::new(file_bytes)
 ///     .resize(100, 100, FilterType::Triangle) // Resizing is specified here, but the library will first perform the cropping below, and then this resizing.
 ///     .crop(50, 50, 200, 200);
 /// ```
@@ -20,7 +24,7 @@ use image::imageops::FilterType;
 /// cropped, and then this cropped portion was resized by half, resulting in an image of 100x100 pixels.
 #[derive(Clone)]
 pub struct Picture {
-    path: String,
+    img: image::DynamicImage,
     crop: Option<(u32, u32, u32, u32)>,
     resize: Option<(u32, u32, FilterType)>,
     position: (u32, u32),
@@ -30,14 +34,14 @@ impl Picture {
     /// and positions it at the point (0,0) of the image being built.
     /// ## Example
     /// ```
+    /// use image::DynamicImage;
     /// use image_builder::Picture;
     ///
-    /// Picture::new("/home/user/logo.png");
+    /// Picture::new(image);
     /// ```
-    pub fn new(path: &str) -> Picture {
-        let path = String::from(path);
+    pub fn new(img: DynamicImage) -> Picture {
         Picture {
-            path,
+            img,
             resize: None,
             crop: None,
             position: (0, 0),
@@ -46,7 +50,8 @@ impl Picture {
 
     /// This method allows resizing an image by specifying the desired new height, width and [`FilterType`].
     /// ## Example
-    /// ```
+    /// ```rust
+    /// # use image_builder::FilterType;
     /// use image_builder::Picture;
     ///
     /// Picture::new("/home/user/logo.png")
@@ -85,19 +90,24 @@ impl Picture {
     }
 }
 
+#[derive(Clone)]
 pub struct CropValues {
     pub x: u32,
     pub y: u32,
     pub width: u32,
     pub height: u32,
 }
+
+#[derive(Clone)]
 pub struct ResizeValues {
     pub nwidth: u32,
     pub nheight: u32,
     pub filter: FilterType,
 }
+
+#[derive(Clone)]
 pub struct PictureValues<'a> {
-    pub path: &'a String,
+    pub img: &'a DynamicImage,
     pub x: i64,
     pub y: i64,
     pub crop: Option<CropValues>,
@@ -105,7 +115,7 @@ pub struct PictureValues<'a> {
 }
 pub fn extract(picture: &Picture) -> PictureValues {
     PictureValues {
-        path: &picture.path,
+        img: &picture.img,
         x: picture.position.0 as i64,
         y: picture.position.1 as i64,
         crop: match picture.crop {

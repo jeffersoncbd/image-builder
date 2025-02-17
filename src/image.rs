@@ -99,8 +99,8 @@ impl<'a> Image<'a> {
     /// use image_builder::colors;
     ///
     /// let mut image = Image::new(500, 500, colors::WHITE);
-    /// let roboto_bold = fs::read("fonts/Roboto/Roboto-Bold.ttf").unwrap();
-    /// image.add_custom_font("Roboto bold", roboto_bold);
+    /// let roboto_bold = fs::read("src/Roboto-Regular.ttf").unwrap();
+    /// image.add_custom_font("Roboto Regular", roboto_bold);
     /// ```
     pub fn add_custom_font(&mut self, name: &'a str, font: Vec<u8>) {
         let font = Font::try_from_vec(font).expect(&format!("Fail to load the font \"{}\"", name));

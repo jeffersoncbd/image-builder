@@ -11,12 +11,13 @@ use image::DynamicImage;
 /// image, the library will always perform cropping first, and then resizing.** ⚠️
 /// ## Example
 /// ```
+/// # use image::io::Reader as ImageReader;
 /// # use image_builder::FilterType;
-/// # let file_bytes:Vec<u8> = Vec::new();
 /// use image_builder::Picture;
 /// use image::DynamicImage;
 ///
-/// Picture::new(file_bytes)
+/// # let image = ImageReader::open("example.png").unwrap().decode().unwrap();
+/// Picture::new(image)
 ///     .resize(100, 100, FilterType::Triangle) // Resizing is specified here, but the library will first perform the cropping below, and then this resizing.
 ///     .crop(50, 50, 200, 200);
 /// ```
@@ -34,9 +35,10 @@ impl Picture {
     /// and positions it at the point (0,0) of the image being built.
     /// ## Example
     /// ```
-    /// use image::DynamicImage;
     /// use image_builder::Picture;
+    /// use image::io::Reader as ImageReader;
     ///
+    /// let image = ImageReader::open("example.png").unwrap().decode().unwrap();
     /// Picture::new(image);
     /// ```
     pub fn new(img: DynamicImage) -> Picture {
@@ -53,8 +55,10 @@ impl Picture {
     /// ```rust
     /// # use image_builder::FilterType;
     /// use image_builder::Picture;
+    /// # use image::io::Reader as ImageReader;
     ///
-    /// Picture::new("/home/user/logo.png")
+    /// # let image = ImageReader::open("example.png").unwrap().decode().unwrap();
+    /// Picture::new(image)
     ///     .resize(200, 100, FilterType::Triangle);
     /// ```
     pub fn resize(&mut self, width: u32, height: u32, filter: FilterType) -> Self {
@@ -66,9 +70,11 @@ impl Picture {
     /// as well as the desired height and width to be cropped.
     /// ## Example
     /// ```
+    /// # use image::io::Reader as ImageReader;
     /// use image_builder::Picture;
     ///
-    /// Picture::new("/home/user/logo.png")
+    /// # let image = ImageReader::open("example.png").unwrap().decode().unwrap();
+    /// Picture::new(image)
     ///     .crop(50, 50, 200, 200);
     /// ```
     pub fn crop(&mut self, x: u32, y: u32, width: u32, height: u32) -> Self {
@@ -79,9 +85,11 @@ impl Picture {
     /// This method allows you to adjust the position of the imported image within the image being constructed.
     /// ## Example
     /// ```
+    /// # use image::io::Reader as ImageReader;
     /// use image_builder::Picture;
     ///
-    /// Picture::new("/home/user/logo.png")
+    /// # let image = ImageReader::open("example.png").unwrap().decode().unwrap();
+    /// Picture::new(image)
     ///     .position(100, 100);
     /// ```
     pub fn position(&mut self, x: u32, y: u32) -> Self {
